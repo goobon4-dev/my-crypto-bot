@@ -7,17 +7,12 @@ st.set_page_config(page_title="AI QUANT PRO", layout="wide")
 
 st.markdown("""
     <style>
-    /* 워터마크 및 불필요한 요소 제거 */
     footer {display: none !important;}
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     .stAppDeployButton {display: none !important;}
-    
-    /* 전체 여백 및 배경 최적화 */
     .block-container {padding-top: 1.5rem; padding-bottom: 0rem;}
     body { background-color: #0e1117; }
-    
-    /* 모바일 글자 겹침 방지 전용 CSS */
     @media (max-width: 600px) {
         .stMarkdown div { line-height: 1.4 !important; }
         h2 { font-size: 1.2rem !important; }
@@ -39,10 +34,8 @@ if menu == "LIVE DASHBOARD":
         .metric-title { color: #848e9c; font-size: 10px; margin-bottom: 4px; }
         .metric-value { font-size: 18px; font-weight: 800; color: white; }
         .metric-label { font-size: 9px; margin-top: 2px; }
-        
         #ai-price { font-size: 32px; font-weight: 900; color: #00FF88; letter-spacing: -1px; margin: 8px 0; line-height: 1; }
         .section-title { color:#848e9c; font-size:12px; font-weight:600; margin-bottom:8px; line-height: 1.4; }
-        
         @media (max-width: 600px) {
             .main-content { flex-direction: column; gap: 15px; }
             #ai-price { font-size: 30px; }
@@ -111,61 +104,48 @@ if menu == "LIVE DASHBOARD":
     """
     components.html(main_engine, height=450)
 
-    # --- 3. 광고 자리 ---
+    # --- 3. 실시간 광고 영역 (본성님 AdMob 적용) ---
     st.markdown("---")
-    st.caption("ADVERTISEMENT")
-    ad_html = """
-    <div style="width: 100%; height: 65px; background-color: #1e1e26; border: 1px dashed #444; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #666; font-size: 11px; font-family: sans-serif;">
-        Google AdSense / AdMob 광고 영역
+    st.caption("SPONSORED")
+    
+    # 본성님의 실제 광고 단위 ID 적용
+    ad_unit_id = "ca-app-pub-6739819397338016/7761113781"
+    ad_pub_id = "ca-app-pub-6739819397338016"
+
+    ad_html = f"""
+    <div style="text-align:center; overflow:hidden;">
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={ad_pub_id}"
+             crossorigin="anonymous"></script>
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:320px;height:50px"
+             data-ad-client="{ad_pub_id}"
+             data-ad-slot="{ad_unit_id.split('/')[-1]}"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({{}});
+        </script>
     </div>
     """
-    components.html(ad_html, height=80)
+    components.html(ad_html, height=70)
 
-    # --- 4. 실시간 경제 뉴스 섹션 (업데이트: 최신 뉴스 위젯) ---
+    # --- 4. 실시간 경제 뉴스 섹션 ---
     st.subheader("📰 실시간 시장 속보")
     news_widget = """
     <div class="tradingview-widget-container">
       <div class="tradingview-widget-container__widget"></div>
       <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
-      {
-      "feedMode": "all_symbols",
-      "isTransparent": true,
-      "displayMode": "adaptive",
-      "width": "100%",
-      "height": "600",
-      "colorTheme": "dark",
-      "locale": "ko"
-      }
+      { "feedMode": "all_symbols", "isTransparent": true, "displayMode": "adaptive", "width": "100%", "height": "600", "colorTheme": "dark", "locale": "ko" }
       </script>
     </div>
     """
     components.html(news_widget, height=620)
 
 else:
-    # --- 5. LEGAL POLICY (업데이트: 개인정보처리방침 강화) ---
+    # --- 5. LEGAL POLICY ---
     st.title("📄 LEGAL POLICY")
     st.markdown("---")
-    
     st.subheader("1. 개인정보처리방침")
-    st.info("""
-    **AI QUANT PRO**는 사용자의 개인정보를 소중히 다룹니다.
-    * **수집 항목:** 앱은 별도의 회원가입 없이 익명으로 운영되며, 개인을 식별할 수 있는 정보를 수집하지 않습니다.
-    * **수집 목적:** 서비스 이용 통계 확인 및 광고 서비스 최적화.
-    * **보유 및 파기:** 수집된 익명 정보는 서비스 개선 후 즉시 파기됩니다.
-    """)
-
-    st.subheader("2. 서비스 개요")
-    st.write("본 앱은 AI 알고리즘 및 실시간 바이낸스 API를 활용한 가상자산 시세 분석 도구입니다.")
-
-    st.subheader("3. 투자 책임 고지 (Risk Disclaimer)")
-    st.warning("""
-    * **원금 손실 위험:** 가상자산은 변동성이 매우 크며, 투자 원금 전체를 잃을 수 있습니다.
-    * **AI 예측의 한계:** 모든 AI 예측 수치는 과거 데이터를 기반으로 한 확률일 뿐, 미래 수익을 보장하지 않습니다.
-    * **최종 판단:** 본 서비스에서 제공하는 정보는 투자 권유가 아니며, 모든 투자의 책임은 사용자 본인에게 있습니다.
-    """)
-
-    st.subheader("4. 저작권")
-    st.write("본 서비스의 UI 디자인, 로직 및 AI 모델 구성은 AI QUANT PRO에 귀속됩니다.")
-    
+    st.info("본 앱은 사용자의 개인정보를 별도로 수집하거나 저장하지 않습니다. 구글 애드몹 광고 서비스 제공을 위한 익명화된 식별정보만 사용될 수 있습니다.")
+    st.subheader("2. 투자 책임 고지")
+    st.warning("모든 AI 예측치는 참고용이며, 투자로 인한 손실 책임은 사용자 본인에게 있습니다.")
     st.markdown("---")
-    st.caption(f"최종 업데이트: {datetime.now().strftime('%Y-%m-%d')} | Version 1.2.0")
+    st.caption(f"최종 업데이트: {datetime.now().strftime('%Y-%m-%d')} | Version 1.3.0")
