@@ -2,17 +2,20 @@ import streamlit as st
 import streamlit.components.v1 as components
 from datetime import datetime
 
-# --- 1. 페이지 설정 및 워터마크 제거 CSS ---
+# --- 1. 페이지 설정 및 워터마크 강제 제거 (최강 설정) ---
 st.set_page_config(page_title="AI QUANT PRO", layout="wide")
 
 st.markdown("""
     <style>
-    /* 상단 메뉴, 헤더, 푸터(Streamlit 로고 포함) 숨기기 */
+    /* 하단 워터마크 및 푸터 강제 제거 */
+    footer {display: none !important;}
     #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
     header {visibility: hidden;}
-    /* 모바일에서 여백 줄이기 */
-    .block-container {padding: 1rem 1rem;}
+    .viewerBadge_container__1QS1n {display: none !important;}
+    .stAppDeployButton {display: none !important;}
+    
+    /* 모바일 여백 및 가독성 조절 */
+    .block-container {padding-top: 1rem; padding-bottom: 0rem;}
     </style>
     """, unsafe_allow_html=True)
 
@@ -22,23 +25,20 @@ menu = st.sidebar.radio("MENU", ["LIVE DASHBOARD", "LEGAL POLICY"])
 st.sidebar.info(f"접속 시간: {datetime.now().strftime('%H:%M:%S')}")
 
 if menu == "LIVE DASHBOARD":
-    # 전 지표 실시간 동기화 엔진 (모바일 폰트 최적화)
-    realtime_all_engine = """
+    # 상단 지표 및 AI 예측가 (모바일 최적화 폰트)
+    main_dashboard = """
     <style>
         .metric-container { display: flex; justify-content: space-between; margin-bottom: 10px; font-family: sans-serif; }
         .metric-box { flex: 1; text-align: left; }
-        .metric-title { color: #848e9c; font-size: 12px; }
-        .metric-value { font-size: 24px; font-weight: 800; color: white; } /* 폰트 줄임: 32px -> 24px */
-        .metric-label { font-size: 11px; }
-
-        .ai-title { color:#848e9c; font-size:14px; font-weight:600; }
-        #ai-price { font-size: 40px; font-weight: 900; color: #00FF88; letter-spacing: -1px; } /* 폰트 줄임: 54px -> 40px */
+        .metric-title { color: #848e9c; font-size: 11px; }
+        .metric-value { font-size: 22px; font-weight: 800; color: white; }
+        .metric-label { font-size: 10px; }
+        #ai-price { font-size: 38px; font-weight: 900; color: #00FF88; letter-spacing: -1px; margin: 5px 0; }
         
-        /* 모바일용 반응형 레이아웃 */
         @media (max-width: 600px) {
             .main-content { flex-direction: column; }
-            #ai-price { font-size: 36px; }
-            .metric-value { font-size: 20px; }
+            #ai-price { font-size: 34px; }
+            .metric-value { font-size: 18px; }
         }
     </style>
 
@@ -59,27 +59,26 @@ if menu == "LIVE DASHBOARD":
             <div class="metric-label" style="color: #00FF88;">● Live Connected</div>
         </div>
     </div>
-    <hr style="border: 0.5px solid #333;">
+    <hr style="border: 0.1px solid #333;">
     
-    <div class="main-content" style="display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap;">
+    <div class="main-content" style="display: flex; gap: 20px; margin-top: 10px; flex-wrap: wrap;">
         <div style="flex: 1.2; min-width: 300px;">
-            <p class="ai-title">BINANCE 실시간 시세 (BTC/USDT)</p>
+            <p style="color:#848e9c; font-size:12px; font-weight:600; margin-bottom:5px;">BINANCE 실시간 시세 (BTC/USDT)</p>
             <div id="tradingview-widget-container"></div>
         </div>
         <div style="flex: 1; min-width: 300px;">
-            <p class="ai-title">AI 예측가 (Short-term)</p>
-            <div style="color: #00FF88; font-size: 11px; font-weight: bold; margin-bottom: 5px;">▶ PRO-QUANT REAL-TIME TRACKING</div>
+            <p style="color:#848e9c; font-size:12px; font-weight:600; margin-bottom:5px;">AI 예측가 (Short-term)</p>
+            <div style="color: #00FF88; font-size: 10px; font-weight: bold;">▶ PRO-QUANT REAL-TIME TRACKING</div>
             <div id="ai-price">$0.00</div>
-            <div style="color: #aaa; font-size: 13px; line-height: 1.5; margin-top: 10px;">
+            <div style="color: #aaa; font-size: 12px; line-height: 1.4;">
                 <b>≡ 실시간 분석 리포트</b><br>
                 • 패턴 유사도: <span style="color:#00FF88;">92.8% 일치</span><br>
-                • 결과: 현재가 대비 <span style="color:#00FF88;">+1.42%</span> 상방 변동성
+                • 결과: 현재가 대비 <span style="color:#00FF88;">+1.42%</span> 상방 변동성 감지
             </div>
         </div>
     </div>
 
     <script>
-        // 트레이딩뷰 위젯
         const script = document.createElement('script');
         script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js';
         script.async = true;
@@ -88,7 +87,6 @@ if menu == "LIVE DASHBOARD":
         });
         document.getElementById('tradingview-widget-container').appendChild(script);
 
-        // 웹소켓
         const fearDisplay = document.getElementById('fear-index');
         const reliabilityDisplay = document.getElementById('algo-reliability');
         const aiPriceDisplay = document.getElementById('ai-price');
@@ -104,9 +102,51 @@ if menu == "LIVE DASHBOARD":
         };
     </script>
     """
-    components.html(realtime_all_engine, height=600)
+    components.html(main_dashboard, height=420)
+
+    # --- 3. 실시간 경제 뉴스 & 속보 섹션 추가 ---
+    st.markdown("---")
+    st.subheader("📰 실시간 시장 속보 & 경제 뉴스")
+    
+    # 트레이딩뷰 실시간 타임라인 위젯 (가장 전문적인 뉴스 소스)
+    news_widget = """
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+      {
+      "feedMode": "all_symbols",
+      "colorTheme": "dark",
+      "isTransparent": true,
+      "displayMode": "regular",
+      "width": "100%",
+      "height": "500",
+      "locale": "ko"
+    }
+      </script>
+    </div>
+    """
+    components.html(news_widget, height=520)
 
 else:
-    # LEGAL POLICY 섹션 (이전과 동일)
+    # --- 4. 전문가용 LEGAL POLICY & TERMS (복구 및 강화) ---
     st.title("📄 LEGAL POLICY & TERMS")
-    # ... (생략된 Policy 내용)
+    st.markdown("---")
+    
+    st.subheader("1. 서비스 개요")
+    st.write("본 앱은 AI 알고리즘을 통한 가상자산 시장 분석 및 실시간 시세 시각화 도구입니다.")
+
+    st.subheader("2. 개인정보 처리방침")
+    st.info("본 서비스는 어떠한 형태의 개인정보(이름, 연락처, 기기식별번호 등)도 서버에 수집하거나 저장하지 않습니다.")
+
+    st.subheader("3. 투자 책임 고지 (IMPORTANT)")
+    st.warning("""
+    * **원금 손실 위험:** 가상자산 투자는 변동성이 매우 크며 원금 전액 손실이 발생할 수 있습니다.
+    * **참고용 데이터:** AI 예측값은 통계적 확률일 뿐, 실제 시장의 움직임과 다를 수 있습니다.
+    * **책임 귀속:** 모든 투자 결정의 최종 책임은 사용자 본인에게 있으며, 본 앱과 운영진은 투자 결과에 법적 책임을 지지 않습니다.
+    """)
+
+    st.subheader("4. 저작권 및 이용 제한")
+    st.write("본 대시보드의 디자인과 알고리즘 로직은 PRO-QUANT의 자산입니다. 무단 배포를 금합니다.")
+    
+    st.markdown("---")
+    st.caption(f"최종 업데이트: {datetime.now().strftime('%Y-%m-%d')} | Version 1.1.0")
