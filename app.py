@@ -2,19 +2,26 @@ import streamlit as st
 import streamlit.components.v1 as components
 from datetime import datetime
 
-# --- 1. 페이지 설정 및 워터마크 제거 시도 ---
+# --- 1. 페이지 설정 및 워터마크 제거 ---
 st.set_page_config(page_title="AI QUANT PRO", layout="wide")
 
 st.markdown("""
     <style>
-    /* 워터마크 및 푸터 숨기기 */
+    /* 워터마크 및 불필요한 요소 제거 */
     footer {display: none !important;}
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     .stAppDeployButton {display: none !important;}
     
-    /* 모바일 여백 최적화 */
-    .block-container {padding-top: 1rem; padding-bottom: 0rem;}
+    /* 전체 여백 및 배경 최적화 */
+    .block-container {padding-top: 1.5rem; padding-bottom: 0rem;}
+    body { background-color: #0e1117; }
+    
+    /* 모바일 글자 겹침 방지 전용 CSS */
+    @media (max-width: 600px) {
+        .stMarkdown div { line-height: 1.4 !important; }
+        h2 { font-size: 1.2rem !important; }
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -24,20 +31,22 @@ menu = st.sidebar.radio("MENU", ["LIVE DASHBOARD", "LEGAL POLICY"])
 st.sidebar.info(f"접속 시간: {datetime.now().strftime('%H:%M:%S')}")
 
 if menu == "LIVE DASHBOARD":
-    # --- 상단 실시간 지표 및 AI 예측 엔진 ---
+    # --- 상단 실시간 지표 및 AI 예측 엔진 (겹침 방지 패치 적용) ---
     main_engine = """
     <style>
-        .metric-container { display: flex; justify-content: space-between; margin-bottom: 10px; font-family: sans-serif; }
-        .metric-box { flex: 1; text-align: left; }
-        .metric-title { color: #848e9c; font-size: 11px; }
-        .metric-value { font-size: 22px; font-weight: 800; color: white; }
-        .metric-label { font-size: 10px; }
-        #ai-price { font-size: 38px; font-weight: 900; color: #00FF88; letter-spacing: -1px; margin: 5px 0; }
+        .metric-container { display: flex; justify-content: space-between; margin-bottom: 15px; font-family: sans-serif; gap: 5px; }
+        .metric-box { flex: 1; text-align: left; background: #161a1e; padding: 10px; border-radius: 8px; }
+        .metric-title { color: #848e9c; font-size: 10px; margin-bottom: 4px; }
+        .metric-value { font-size: 18px; font-weight: 800; color: white; }
+        .metric-label { font-size: 9px; margin-top: 2px; }
+        
+        #ai-price { font-size: 32px; font-weight: 900; color: #00FF88; letter-spacing: -1px; margin: 8px 0; line-height: 1; }
+        .section-title { color:#848e9c; font-size:12px; font-weight:600; margin-bottom:8px; line-height: 1.4; }
         
         @media (max-width: 600px) {
-            .main-content { flex-direction: column; }
-            #ai-price { font-size: 34px; }
-            .metric-value { font-size: 18px; }
+            .main-content { flex-direction: column; gap: 15px; }
+            #ai-price { font-size: 30px; }
+            .metric-value { font-size: 16px; }
         }
     </style>
 
@@ -55,24 +64,23 @@ if menu == "LIVE DASHBOARD":
         <div class="metric-box">
             <div class="metric-title">데이터 상태</div>
             <div class="metric-value">정상</div>
-            <div class="metric-label" style="color: #00FF88;">● Live Connected</div>
+            <div class="metric-label" style="color: #00FF88;">● Live</div>
         </div>
     </div>
-    <hr style="border: 0.1px solid #333;">
     
     <div class="main-content" style="display: flex; gap: 20px; margin-top: 10px; flex-wrap: wrap;">
-        <div style="flex: 1.2; min-width: 300px;">
-            <p style="color:#848e9c; font-size:12px; font-weight:600; margin-bottom:5px;">BINANCE 실시간 시세 (BTC/USDT)</p>
+        <div style="flex: 1.2; min-width: 280px;">
+            <p class="section-title">BINANCE 실시간 시세 (BTC/USDT)</p>
             <div id="tradingview-widget-container"></div>
         </div>
-        <div style="flex: 1; min-width: 300px;">
-            <p style="color:#848e9c; font-size:12px; font-weight:600; margin-bottom:5px;">AI 예측가 (Short-term)</p>
-            <div style="color: #00FF88; font-size: 10px; font-weight: bold;">▶ PRO-QUANT REAL-TIME TRACKING</div>
+        <div style="flex: 1; min-width: 280px;">
+            <p class="section-title">AI 예측가 (Short-term)</p>
+            <div style="color: #00FF88; font-size: 10px; font-weight: bold; letter-spacing: 0.5px;">▶ PRO-QUANT REAL-TIME TRACKING</div>
             <div id="ai-price">$0.00</div>
-            <div style="color: #aaa; font-size: 12px; line-height: 1.4;">
-                <b>≡ 실시간 분석 리포트</b><br>
+            <div style="color: #aaa; font-size: 12px; line-height: 1.6; background: #1c2026; padding: 10px; border-radius: 8px;">
+                <b style="color: white;">≡ 실시간 분석 리포트</b><br>
                 • 패턴 유사도: <span style="color:#00FF88;">92.8% 일치</span><br>
-                • 결과: 현재가 대비 <span style="color:#00FF88;">+1.42%</span> 상방 변동성 감지
+                • 분석 결과: 현재가 대비 <span style="color:#00FF88;">+1.42%</span> 상방 변동성 감지
             </div>
         </div>
     </div>
@@ -101,20 +109,20 @@ if menu == "LIVE DASHBOARD":
         };
     </script>
     """
-    components.html(main_engine, height=420)
+    components.html(main_engine, height=450)
 
-    # --- 3. 광고 자리 (Ad Space) ---
+    # --- 3. 광고 자리 (수익 창출 최적화) ---
     st.markdown("---")
     st.caption("ADVERTISEMENT")
     ad_html = """
     <div style="width: 100%; height: 65px; background-color: #1e1e26; border: 1px dashed #444; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #666; font-size: 11px; font-family: sans-serif;">
-        구글 애드센스/애드몹 광고가 게재될 위치입니다.
+        Google AdSense / AdMob 광고 영역
     </div>
     """
     components.html(ad_html, height=80)
 
     # --- 4. 실시간 경제 뉴스 섹션 ---
-    st.subheader("📰 실시간 시장 속보 & 경제 뉴스")
+    st.subheader("📰 실시간 시장 속보")
     news_widget = """
     <div class="tradingview-widget-container">
       <div class="tradingview-widget-container__widget"></div>
@@ -128,25 +136,22 @@ if menu == "LIVE DASHBOARD":
     components.html(news_widget, height=520)
 
 else:
-    # --- 5. 전문가용 LEGAL POLICY (복구) ---
-    st.title("📄 LEGAL POLICY & TERMS")
+    # --- 5. LEGAL POLICY ---
+    st.title("📄 LEGAL POLICY")
     st.markdown("---")
     
     st.subheader("1. 서비스 개요")
-    st.write("본 앱은 AI 알고리즘을 활용한 가상자산 시세 분석 및 시각화 도구입니다.")
+    st.write("본 앱은 AI 알고리즘을 활용한 가상자산 시세 분석 도구입니다.")
 
-    st.subheader("2. 개인정보 처리방침")
-    st.info("본 앱은 사용자의 어떠한 개인정보도 서버에 저장하거나 외부로 전송하지 않는 안전한 서비스입니다.")
-
-    st.subheader("3. 투자 책임 고지 (IMPORTANT)")
+    st.subheader("2. 투자 책임 고지")
     st.warning("""
-    * **손실 위험:** 가상자산은 높은 변동성을 가지며 투자 원금의 전액 손실이 발생할 수 있습니다.
-    * **데이터 한계:** 본 앱의 예측값은 AI의 통계적 추정치일 뿐, 실제 시장 움직임과 다를 수 있습니다.
-    * **책임 귀속:** 모든 투자 판단의 결과에 대한 책임은 사용자 본인에게 있으며, 본 서비스는 법적 책임을 지지 않습니다.
+    * 가상자산은 높은 변동성으로 원금 손실 위험이 있습니다.
+    * 본 AI 예측치는 참고용이며 실제 시장 상황과 다를 수 있습니다.
+    * 모든 투자의 책임은 사용자 본인에게 있습니다.
     """)
 
-    st.subheader("4. 저작권 및 이용 안내")
-    st.write("본 앱의 디자인 및 분석 로직은 PRO-QUANT의 자산입니다. 무단 복제를 금합니다.")
+    st.subheader("3. 저작권")
+    st.write("본 서비스의 모든 디자인과 로직은 AI QUANT PRO에 귀속됩니다.")
     
     st.markdown("---")
     st.caption(f"최종 업데이트: {datetime.now().strftime('%Y-%m-%d')} | Version 1.1.0")
