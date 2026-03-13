@@ -104,4 +104,22 @@ if menu == "ANALYSIS":
             xaxis=dict(showgrid=True, gridcolor='#2d2d2d', zeroline=False),
             yaxis=dict(showgrid=True, gridcolor='#2d2d2d', tickformat="$,.0f", zeroline=False)
         )
-        status
+        status.update(label="✅ 실시간 데이터 분석 및 예측 완료", state="complete", expanded=False)
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    st.markdown("""
+    <div class="stat-box">
+        <span style="color:#888; font-size:12px;">ENGINE STATUS</span><br>
+        <span style="font-size:16px; font-weight:bold; color:#00ff88;">REAL-TIME SYNCED WITH BINANCE</span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+else:
+    st.title("📄 개인정보처리방침")
+    st.markdown(f"최종 수정일: {datetime.now().strftime('%Y-%m-%d')}")
+    st.write("본 시스템은 개인정보를 수집하지 않으며, 바이낸스의 공개 API를 통해 실시간 데이터를 분석합니다.")
+
+if menu == "ANALYSIS":
+    time.sleep(60)
+    st.rerun()
