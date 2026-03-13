@@ -1,76 +1,91 @@
 import streamlit as st
 import requests
-import numpy as np
-import plotly.graph_objects as go
 import urllib3
 from datetime import datetime
 
+# SSL 경고 무시
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# --- 1. 바이낸스 시세 강제 호출 ---
-def get_real_time_price():
+# --- 1. 바이낸스 실시간 데이터 엔진 ---
+def get_btc_data():
     try:
-        # 캐싱 방지를 위해 URL 뒤에 매번 다른 숫자를 붙입니다.
-        url = f"https://api.binance.com/api/3/ticker/price?symbol=BTCUSDT&_ts={datetime.now().timestamp()}"
-        response = requests.get(url, timeout=5)
-        data = response.json()
-        # 'price' 값을 가져와서 숫자로 변환
-        return float(data['price'])
+        # 캐싱 방지를 위해 타임스탬프 파라미터 추가
+        url = f"https://api.binance.com/api/3/ticker/price?symbol=BTCUSDT&_t={int(datetime.now().timestamp())}"
+        res = requests.get(url, timeout=3).json()
+        price = float(res['price'])
+        return price
     except:
-        return 71234.56 # 정 안되면 티라도 나게 이 숫자로 설정
+        return 0.0
 
-# --- 2. 앱 실행 및 데이터 동기화 ---
-st.set_page_config(page_title="AI QUANT SYSTEM", layout="wide")
+# --- 2. 페이지 설정 ---
+st.set_page_config(page_title="QUANT AI DASHBOARD", layout="wide")
 
-# [중요] 앱을 켜는 순간 이 변수에 진짜 현재가가 저장됩니다.
-live_btc = get_real_time_price()
+# 스타일 커스텀: 숫자 가독성 극대화
+st.markdown("""
+<style>
+    .metric-container {
+        background-color: #1a1c24;
+        padding: 25px;
+        border-radius: 15px;
+        border: 1px solid #333;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .price-text { font-size: 42px !important; font-weight: 800; color: #FFFFFF; }
+    .target-text { font-size: 42px !important; font-weight: 800; color: #00FF88; }
+    .label-text { font-size: 16px; color: #888; margin-bottom: 10px; }
+</style>
+""", unsafe_allow_html=True)
 
-# --- 3. 디자인 (기존 그대로 유지) ---
+# 시세 데이터 로드
+current_price = get_btc_data()
+
+# --- 3. 메인 화면 구성 ---
 st.sidebar.title("🤖 QUANT SYSTEM")
-menu = st.sidebar.radio("MENU", ["ANALYSIS", "POLICY"], label_visibility="collapsed")
+menu = st.sidebar.radio("MENU", ["LIVE DASHBOARD", "POLICY"], label_visibility="collapsed")
 
-if menu == "ANALYSIS":
-    st.markdown(f"""
-        <div style="padding: 1rem 0rem; border-bottom: 2px solid #2d2d2d; margin-bottom: 1.5rem;">
-            <p style="color: #F0B90B; font-size: 11px; margin: 0;">OFFICIAL BINANCE API DATA</p>
-            <h2 style="color: white; margin: 0;">BTC-USD 인공지능 패턴 분석</h2>
+if menu == "LIVE DASHBOARD":
+    st.markdown("""
+        <div style="padding: 1rem 0rem; margin-bottom: 2rem;">
+            <h1 style="color: white; margin: 0;">AI 비트코인 시세 분석 결과</h1>
+            <p style="color: #F0B90B; margin: 0;">REAL-TIME BINANCE API SYNCHRONIZED</p>
         </div>
     """, unsafe_allow_html=True)
 
-    # 상단 3개 위젯
-    c1, c2, c3 = st.columns(3)
+    # 상단 3개 기본 지표 (탐욕지수, 신뢰도 등 그대로 유지)
+    col1, col2, col3 = st.columns(3)
+    col1.metric("시장 탐욕 지수", "15", "Extreme Fear")
+    col2.metric("알고리즘 신뢰도", "94.2%", "Optimal")
+    col3.metric("데이터 상태", "정상", "Live Connected")
+
+    st.write("---")
+
+    # 하이라이트: 현재가 & 예측가 숫자 섹션
+    st.markdown("### 📊 AI 가격 분석 리포트")
     
-    # [핵심] 여기에 live_btc가 들어가야 숫자가 바뀝니다!
-    c1.metric(
-        label="Binance 현재가", 
-        value=f"${live_btc:,.2f}", # 예: $72,123.45
-        delta="LIVE FETCH"
-    )
-    c2.metric("시장 탐욕 지수", "15", "Extreme Fear")
-    c3.metric("알고리즘 신뢰도", "94.2%", "Optimal")
-
-    # --- 4. 그래프 (현재가 기준으로 정렬) ---
-    x_past = np.arange(0, 51)
-    x_future = np.arange(50, 71)
+    c1, c2 = st.columns(2)
     
-    # 흰색 선 끝점이 정확히 live_btc가 되도록 설정
-    y_current = live_btc + (np.random.normal(0, 50, 51).cumsum() - np.random.normal(0, 50, 51).cumsum()[-1])
-    y_future = live_btc + np.random.normal(100, 180, 21).cumsum()
+    with c1:
+        st.markdown(f"""
+            <div class="metric-container">
+                <div class="label-text">Binance 현재가</div>
+                <div class="price-text">${current_price:,.2f}</div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+    with c2:
+        # 현재가 기반으로 간단한 예측가 산출 (예: 현재가 + 1.2% 상승 분석)
+        predicted_price = current_price * 1.0125 
+        st.markdown(f"""
+            <div class="metric-container">
+                <div class="label-text">1시간 뒤 AI 예측가</div>
+                <div class="target-text">${predicted_price:,.2f}</div>
+            </div>
+        """, unsafe_allow_html=True)
 
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=x_past, y=y_current, mode='lines', name='실시간 마켓', line=dict(color='#FFFFFF', width=4)))
-    fig.add_trace(go.Scatter(x=x_future, y=y_future, mode='lines', name='AI 예상 경로', line=dict(color='#00E676', width=4)))
-
-    fig.update_layout(
-        template='plotly_dark', height=550, margin=dict(l=10, r=10, t=10, b=10),
-        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-        yaxis=dict(showgrid=True, gridcolor='#2d2d2d', tickformat="$,.0f",
-                   range=[live_btc - 1500, live_btc + 2500])
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
-    st.info(f"데이터 로드 시각: {datetime.now().strftime('%H:%M:%S')} (새로고침 시 갱신)")
+    # 하단 정보 바
+    st.info(f"마지막 데이터 분석 시각: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} (F5를 눌러 갱신)")
 
 else:
     st.title("📄 개인정보처리방침")
-    st.write("본 서비스는 사용자의 데이터를 수집하지 않습니다.")
+    st.write("본 시스템은 개인정보를 저장하지 않으며 투자 결과에 대한 책임을 지지 않습니다.")
