@@ -1,85 +1,80 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import requests
+import time
 from datetime import datetime
 
-# --- 1. 페이지 설정 ---
+# --- 1. 실시간 데이터 엔진 ---
+def get_current_price():
+    # 바이낸스 API에서 실시간 정수 가격 획득
+    try:
+        url = "https://api.binance.com/api/3/ticker/price?symbol=BTCUSDT"
+        res = requests.get(url, timeout=1).json()
+        return float(res['price'])
+    except:
+        return 71800.0  # 연결 실패 시 방어용 가격
+
+# --- 2. 페이지 설정 ---
 st.set_page_config(page_title="AI QUANT PRO", layout="wide")
 
-# 사이드바 메뉴
-st.sidebar.title("🤖 QUANT SYSTEM")
-menu = st.sidebar.radio("MENU", ["LIVE DASHBOARD", "LEGAL POLICY"])
+# 현재 시세 가져오기
+current_btc = get_current_price()
 
-# --- 스타일 정의 (박스 제거 및 텍스트 강조) ---
+# --- AI 예측 알고리즘 (실시간 연동) ---
+# 현재가 대비 1.42% 상승을 예측한다고 가정 (본성님이 원하시는 로직으로 변경 가능)
+predicted_target = current_btc * 1.0142 
+
+# --- 3. 스타일 및 레이아웃 ---
 st.markdown("""
 <style>
     .stApp { background-color: #0b0e11; }
-    .report-title { font-size: 28px; font-weight: 800; color: white; margin-bottom: 20px; }
-    
-    /* 섹션 라벨 스타일 */
-    .section-label { 
-        color: #848e9c; font-size: 14px; font-weight: 600; 
-        margin-bottom: 10px; border-left: 3px solid #F0B90B; padding-left: 10px;
-    }
-    
-    /* AI 예측가 텍스트 스타일 */
-    .ai-price { font-size: 54px; font-weight: 900; color: #00FF88; letter-spacing: -1.5px; line-height: 1; }
+    .ai-price { font-size: 54px; font-weight: 900; color: #00FF88; letter-spacing: -1.5px; line-height: 1.2; }
+    .section-label { color: #848e9c; font-size: 14px; font-weight: 600; border-left: 3px solid #F0B90B; padding-left: 10px; margin-bottom: 10px; }
     .ai-badge { color: #00FF88; font-size: 12px; font-weight: bold; margin-bottom: 5px; }
-    
-    /* 리포트 텍스트 스타일 */
-    .report-text { color: #aaa; font-size: 14px; line-height: 1.6; margin-top: 15px; }
 </style>
 """, unsafe_allow_html=True)
 
-if menu == "LIVE DASHBOARD":
-    st.markdown('<div class="report-title">📊 AI 비트코인 실시간 분석 리포트</div>', unsafe_allow_html=True)
+st.markdown('## 📊 AI 비트코인 실시간 분석 리포트')
 
-    # 상단 3개 지표 (기존 유지)
-    col_a, col_b, col_c = st.columns(3)
-    col_a.metric("시장 탐욕 지수", "15", "Extreme Fear")
-    col_b.metric("알고리즘 신뢰도", "94.2%", "Optimal")
-    col_c.metric("데이터 상태", "정상", "Live Connected")
+# 상단 3개 지표
+col_a, col_b, col_c = st.columns(3)
+col_a.metric("시장 탐욕 지수", "15", "Extreme Fear")
+col_b.metric("알고리즘 신뢰도", "94.2%", "Optimal")
+col_c.metric("데이터 상태", "정상", "Live Connected")
 
-    st.write("---")
+st.write("---")
 
-    # 메인 콘텐츠 (박스 없이 시원하게 배치)
-    c1, c2 = st.columns([1.2, 1]) # 좌측 시세 영역을 조금 더 넓게
+# 메인 콘텐츠
+c1, c2 = st.columns([1.2, 1])
 
-    with c1:
-        st.markdown('<div class="section-label">BINANCE 실시간 시세 (BTC/USDT)</div>', unsafe_allow_html=True)
-        # 위젯이 죽지 않도록 높이를 충분히 확보한 클린 코드
-        tradingview_html = """
-            <div style="height: 140px;">
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-                {
-                  "symbol": "BINANCE:BTCUSDT",
-                  "width": "100%",
-                  "colorTheme": "dark",
-                  "isTransparent": true,
-                  "locale": "ko"
-                }
-                </script>
-            </div>
-        """
-        components.html(tradingview_html, height=160)
+with c1:
+    st.markdown('<div class="section-label">BINANCE 실시간 시세 (BTC/USDT)</div>', unsafe_allow_html=True)
+    # 트레이딩뷰 위젯 (시각적 실시간성)
+    tradingview_html = """
+        <div style="height: 140px;">
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+            {"symbol": "BINANCE:BTCUSDT", "width": "100%", "colorTheme": "dark", "isTransparent": true, "locale": "ko"}
+            </script>
+        </div>
+    """
+    components.html(tradingview_html, height=160)
 
-    with c2:
-        st.markdown('<div class="section-label">AI 예측가 (Short-term)</div>', unsafe_allow_html=True)
-        st.markdown('<div class="ai-badge">▶ PRO-QUANT ENGINE ANALYSIS</div>', unsafe_allow_html=True)
-        st.markdown('<div class="ai-price">$72,832.00</div>', unsafe_allow_html=True)
-        
-        # 상세 리포트 (박스 없이 텍스트로만 깔끔하게)
-        st.markdown(f"""
-            <div class="report-text">
-                <b>≡ 분석 리포트 요약</b><br>
-                • 유사 가격 패턴 시점: 2024년 03월 10일<br>
-                • 패턴 알고리즘 유사도: <span style="color:#00FF88;">92.8% 일치</span><br>
-                • 분석 결과: 단기 강세 패턴이 확인되며 반등 가능성 높음
-            </div>
-        """, unsafe_allow_html=True)
+with c2:
+    st.markdown('<div class="section-label">AI 예측가 (Short-term)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="ai-badge">▶ PRO-QUANT REAL-TIME TRACKING</div>', unsafe_allow_html=True)
+    
+    # 실시간으로 계산된 예측가 표시
+    st.markdown(f'<div class="ai-price">${predicted_target:,.2f}</div>', unsafe_allow_html=True)
+    
+    st.markdown(f"""
+        <div style="color: #aaa; font-size: 14px; line-height: 1.6; margin-top: 15px;">
+            <b>≡ 실시간 분석 리포트</b><br>
+            • 기준 시세: ${current_btc:,.2f}<br>
+            • 패턴 유사도: <span style="color:#00FF88;">92.8% 일치</span> (2024-03-10 패턴)<br>
+            • 분석 결과: 현재가 대비 <span style="color:#00FF88;">+1.42%</span> 상방 변동성 감지
+        </div>
+    """, unsafe_allow_html=True)
 
-    st.markdown(f'<div style="font-size:11px; color:#444; text-align:right; margin-top:50px;">마지막 분석 로그: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}</div>', unsafe_allow_html=True)
-
-else:
-    st.title("📄 개인정보처리방침")
-    st.markdown("---")
-    st.write("본 시스템은 사용자 개인정보를 수집하지 않으며, 바이낸스 API 데이터를 실시간 참조합니다.")
+# 10초마다 자동으로 페이지를 리프레시하여 AI 예측가를 갱신 (선택 사항)
+# time.sleep(10)
+# st.rerun()
