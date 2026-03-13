@@ -106,3 +106,42 @@ if menu == "REAL-TIME ANALYSIS":
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
             xaxis=dict(showgrid=True, gridcolor='#2d2d2d', title="Time Units (30m)"),
             yaxis=dict(showgrid=True, gridcolor='#2d2d2d', title="Price (USD)")
+        )
+        status.update(label="✅ 실시간 패턴 매칭 완료", state="complete", expanded=False)
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    st.markdown("""
+    <div class="stat-box">
+        <span style="color:#888; font-size:12px;">SYSTEM STATUS</span><br>
+        <span style="font-size:18px; font-weight:bold; color:#00ff88;">ALGORITHM RUNNING</span>
+        <span style="color:#888; font-size:13px; margin-left:10px;">(업데이트 주기: 60초)</span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 광고 영역
+    st.write("")
+    st.markdown("""
+    <div style="text-align:center; padding:15px; border:1px dashed #444; border-radius:10px; background:#16161d; margin-top:10px;">
+        <div style="color:#666; font-size:12px;">[AD AREA]</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+else:
+    # --- 개인정보처리방침 (이름 완전 삭제 버전) ---
+    st.title("📄 개인정보처리방침")
+    st.markdown(f"""
+    **최종 수정일: {datetime.now().strftime('%Y년 %m월 %d일')}**
+    
+    본 인공지능 분석 시스템(이하 '서비스')은 사용자의 익명성과 데이터 보안을 최우선으로 합니다.
+    
+    1. **개인정보 미수집:** 본 서비스는 사용자의 성함, 연락처, 이메일 등 어떠한 개인 식별 정보도 요구하거나 수집하지 않습니다.
+    2. **데이터 처리 방침:** 앱 내에서 보여지는 모든 시세 데이터 및 분석 결과는 공공 API를 통해 수신되며, 사용자의 기기 내에서만 일시적으로 처리됩니다.
+    3. **광고 서비스 운영:** 본 서비스는 지속적인 운영을 위해 Google AdMob 광고를 포함하고 있으며, 구글의 정책에 따라 익명의 식별자가 사용될 수 있습니다.
+    4. **문의:** dktkrk123@naver.com (시스템 관리자)
+    """)
+
+# 실시간 자동 새로고침 (60초 단위)
+if menu == "REAL-TIME ANALYSIS":
+    time.sleep(60)
+    st.rerun()
