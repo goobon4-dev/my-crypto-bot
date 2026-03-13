@@ -31,7 +31,7 @@ menu = st.sidebar.radio("MENU", ["LIVE DASHBOARD", "LEGAL POLICY"])
 st.sidebar.info(f"접속 시간: {datetime.now().strftime('%H:%M:%S')}")
 
 if menu == "LIVE DASHBOARD":
-    # --- 상단 실시간 지표 및 AI 예측 엔진 (겹침 방지 패치 적용) ---
+    # --- 상단 실시간 지표 및 AI 예측 엔진 ---
     main_engine = """
     <style>
         .metric-container { display: flex; justify-content: space-between; margin-bottom: 15px; font-family: sans-serif; gap: 5px; }
@@ -111,7 +111,7 @@ if menu == "LIVE DASHBOARD":
     """
     components.html(main_engine, height=450)
 
-    # --- 3. 광고 자리 (수익 창출 최적화) ---
+    # --- 3. 광고 자리 ---
     st.markdown("---")
     st.caption("ADVERTISEMENT")
     ad_html = """
@@ -121,37 +121,51 @@ if menu == "LIVE DASHBOARD":
     """
     components.html(ad_html, height=80)
 
-    # --- 4. 실시간 경제 뉴스 섹션 ---
+    # --- 4. 실시간 경제 뉴스 섹션 (업데이트: 최신 뉴스 위젯) ---
     st.subheader("📰 실시간 시장 속보")
     news_widget = """
     <div class="tradingview-widget-container">
       <div class="tradingview-widget-container__widget"></div>
       <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
       {
-      "feedMode": "all_symbols", "colorTheme": "dark", "isTransparent": true, "displayMode": "regular", "width": "100%", "height": "500", "locale": "ko"
+      "feedMode": "all_symbols",
+      "isTransparent": true,
+      "displayMode": "adaptive",
+      "width": "100%",
+      "height": "600",
+      "colorTheme": "dark",
+      "locale": "ko"
       }
       </script>
     </div>
     """
-    components.html(news_widget, height=520)
+    components.html(news_widget, height=620)
 
 else:
-    # --- 5. LEGAL POLICY ---
+    # --- 5. LEGAL POLICY (업데이트: 개인정보처리방침 강화) ---
     st.title("📄 LEGAL POLICY")
     st.markdown("---")
     
-    st.subheader("1. 서비스 개요")
-    st.write("본 앱은 AI 알고리즘을 활용한 가상자산 시세 분석 도구입니다.")
-
-    st.subheader("2. 투자 책임 고지")
-    st.warning("""
-    * 가상자산은 높은 변동성으로 원금 손실 위험이 있습니다.
-    * 본 AI 예측치는 참고용이며 실제 시장 상황과 다를 수 있습니다.
-    * 모든 투자의 책임은 사용자 본인에게 있습니다.
+    st.subheader("1. 개인정보처리방침")
+    st.info("""
+    **AI QUANT PRO**는 사용자의 개인정보를 소중히 다룹니다.
+    * **수집 항목:** 앱은 별도의 회원가입 없이 익명으로 운영되며, 개인을 식별할 수 있는 정보를 수집하지 않습니다.
+    * **수집 목적:** 서비스 이용 통계 확인 및 광고 서비스 최적화.
+    * **보유 및 파기:** 수집된 익명 정보는 서비스 개선 후 즉시 파기됩니다.
     """)
 
-    st.subheader("3. 저작권")
-    st.write("본 서비스의 모든 디자인과 로직은 AI QUANT PRO에 귀속됩니다.")
+    st.subheader("2. 서비스 개요")
+    st.write("본 앱은 AI 알고리즘 및 실시간 바이낸스 API를 활용한 가상자산 시세 분석 도구입니다.")
+
+    st.subheader("3. 투자 책임 고지 (Risk Disclaimer)")
+    st.warning("""
+    * **원금 손실 위험:** 가상자산은 변동성이 매우 크며, 투자 원금 전체를 잃을 수 있습니다.
+    * **AI 예측의 한계:** 모든 AI 예측 수치는 과거 데이터를 기반으로 한 확률일 뿐, 미래 수익을 보장하지 않습니다.
+    * **최종 판단:** 본 서비스에서 제공하는 정보는 투자 권유가 아니며, 모든 투자의 책임은 사용자 본인에게 있습니다.
+    """)
+
+    st.subheader("4. 저작권")
+    st.write("본 서비스의 UI 디자인, 로직 및 AI 모델 구성은 AI QUANT PRO에 귀속됩니다.")
     
     st.markdown("---")
-    st.caption(f"최종 업데이트: {datetime.now().strftime('%Y-%m-%d')} | Version 1.1.0")
+    st.caption(f"최종 업데이트: {datetime.now().strftime('%Y-%m-%d')} | Version 1.2.0")
