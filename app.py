@@ -2,19 +2,18 @@ import streamlit as st
 import streamlit.components.v1 as components
 from datetime import datetime
 
-# --- 1. 페이지 설정 및 워터마크 강제 제거 (최강 설정) ---
+# --- 1. 페이지 설정 및 워터마크 제거 시도 ---
 st.set_page_config(page_title="AI QUANT PRO", layout="wide")
 
 st.markdown("""
     <style>
-    /* 하단 워터마크 및 푸터 강제 제거 */
+    /* 워터마크 및 푸터 숨기기 */
     footer {display: none !important;}
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
-    .viewerBadge_container__1QS1n {display: none !important;}
     .stAppDeployButton {display: none !important;}
     
-    /* 모바일 여백 및 가독성 조절 */
+    /* 모바일 여백 최적화 */
     .block-container {padding-top: 1rem; padding-bottom: 0rem;}
     </style>
     """, unsafe_allow_html=True)
@@ -25,8 +24,8 @@ menu = st.sidebar.radio("MENU", ["LIVE DASHBOARD", "LEGAL POLICY"])
 st.sidebar.info(f"접속 시간: {datetime.now().strftime('%H:%M:%S')}")
 
 if menu == "LIVE DASHBOARD":
-    # 상단 지표 및 AI 예측가 (모바일 최적화 폰트)
-    main_dashboard = """
+    # --- 상단 실시간 지표 및 AI 예측 엔진 ---
+    main_engine = """
     <style>
         .metric-container { display: flex; justify-content: space-between; margin-bottom: 10px; font-family: sans-serif; }
         .metric-box { flex: 1; text-align: left; }
@@ -102,51 +101,52 @@ if menu == "LIVE DASHBOARD":
         };
     </script>
     """
-    components.html(main_dashboard, height=420)
+    components.html(main_engine, height=420)
 
-    # --- 3. 실시간 경제 뉴스 & 속보 섹션 추가 ---
+    # --- 3. 광고 자리 (Ad Space) ---
     st.markdown("---")
+    st.caption("ADVERTISEMENT")
+    ad_html = """
+    <div style="width: 100%; height: 65px; background-color: #1e1e26; border: 1px dashed #444; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #666; font-size: 11px; font-family: sans-serif;">
+        구글 애드센스/애드몹 광고가 게재될 위치입니다.
+    </div>
+    """
+    components.html(ad_html, height=80)
+
+    # --- 4. 실시간 경제 뉴스 섹션 ---
     st.subheader("📰 실시간 시장 속보 & 경제 뉴스")
-    
-    # 트레이딩뷰 실시간 타임라인 위젯 (가장 전문적인 뉴스 소스)
     news_widget = """
     <div class="tradingview-widget-container">
       <div class="tradingview-widget-container__widget"></div>
       <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
       {
-      "feedMode": "all_symbols",
-      "colorTheme": "dark",
-      "isTransparent": true,
-      "displayMode": "regular",
-      "width": "100%",
-      "height": "500",
-      "locale": "ko"
-    }
+      "feedMode": "all_symbols", "colorTheme": "dark", "isTransparent": true, "displayMode": "regular", "width": "100%", "height": "500", "locale": "ko"
+      }
       </script>
     </div>
     """
     components.html(news_widget, height=520)
 
 else:
-    # --- 4. 전문가용 LEGAL POLICY & TERMS (복구 및 강화) ---
+    # --- 5. 전문가용 LEGAL POLICY (복구) ---
     st.title("📄 LEGAL POLICY & TERMS")
     st.markdown("---")
     
     st.subheader("1. 서비스 개요")
-    st.write("본 앱은 AI 알고리즘을 통한 가상자산 시장 분석 및 실시간 시세 시각화 도구입니다.")
+    st.write("본 앱은 AI 알고리즘을 활용한 가상자산 시세 분석 및 시각화 도구입니다.")
 
     st.subheader("2. 개인정보 처리방침")
-    st.info("본 서비스는 어떠한 형태의 개인정보(이름, 연락처, 기기식별번호 등)도 서버에 수집하거나 저장하지 않습니다.")
+    st.info("본 앱은 사용자의 어떠한 개인정보도 서버에 저장하거나 외부로 전송하지 않는 안전한 서비스입니다.")
 
     st.subheader("3. 투자 책임 고지 (IMPORTANT)")
     st.warning("""
-    * **원금 손실 위험:** 가상자산 투자는 변동성이 매우 크며 원금 전액 손실이 발생할 수 있습니다.
-    * **참고용 데이터:** AI 예측값은 통계적 확률일 뿐, 실제 시장의 움직임과 다를 수 있습니다.
-    * **책임 귀속:** 모든 투자 결정의 최종 책임은 사용자 본인에게 있으며, 본 앱과 운영진은 투자 결과에 법적 책임을 지지 않습니다.
+    * **손실 위험:** 가상자산은 높은 변동성을 가지며 투자 원금의 전액 손실이 발생할 수 있습니다.
+    * **데이터 한계:** 본 앱의 예측값은 AI의 통계적 추정치일 뿐, 실제 시장 움직임과 다를 수 있습니다.
+    * **책임 귀속:** 모든 투자 판단의 결과에 대한 책임은 사용자 본인에게 있으며, 본 서비스는 법적 책임을 지지 않습니다.
     """)
 
-    st.subheader("4. 저작권 및 이용 제한")
-    st.write("본 대시보드의 디자인과 알고리즘 로직은 PRO-QUANT의 자산입니다. 무단 배포를 금합니다.")
+    st.subheader("4. 저작권 및 이용 안내")
+    st.write("본 앱의 디자인 및 분석 로직은 PRO-QUANT의 자산입니다. 무단 복제를 금합니다.")
     
     st.markdown("---")
     st.caption(f"최종 업데이트: {datetime.now().strftime('%Y-%m-%d')} | Version 1.1.0")
