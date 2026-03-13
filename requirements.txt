@@ -1,6 +1,1 @@
-streamlit
-pandas
-requests
-numpy
-plotly
-kaleido==0.2.1
+streamlit-autorefresh
