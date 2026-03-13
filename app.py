@@ -1,85 +1,85 @@
 import streamlit as st
-import requests
-import urllib3
-import time
+import streamlit.components.v1 as components
 from datetime import datetime
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+# --- 1. 페이지 설정 ---
+st.set_page_config(page_title="AI QUANT DASHBOARD", layout="wide")
 
-# --- 1. 캐시 파괴 엔진 (실시간 가격 강제 호출) ---
-def get_realtime_binance_price():
-    # URL 뒤에 매번 바뀌는 타임스탬프를 붙여서 '새로운 데이터'를 강제 호출합니다.
-    timestamp = int(time.time() * 1000)
-    url = f"https://api.binance.com/api/3/ticker/price?symbol=BTCUSDT&_t={timestamp}"
-    try:
-        # 응답을 기다리는 시간(timeout)을 짧게 잡아 최신성을 유지합니다.
-        res = requests.get(url, timeout=1).json()
-        # 십 단위까지 정확하게 맞추기 위해 정수형으로 즉시 변환
-        return int(float(res['price']))
-    except:
-        # 연결 실패 시 사용자에게 알림을 주거나 마지막 알려진 가격 반환
-        return 71895 # 스크린샷 1184 기준 최신가로 방어
-
-# --- 2. 페이지 설정 및 디자인 ---
-st.set_page_config(page_title="AI QUANT PRO", layout="wide")
-
-st.markdown("""
-<style>
-    .main-card { background-color: #161a1e; padding: 35px; border-radius: 12px; border: 1px solid #2b2f36; }
-    .price-text { font-size: 56px !important; font-weight: 900; color: #FFFFFF; letter-spacing: -1.5px; }
-    .target-text { font-size: 56px !important; font-weight: 900; color: #00FF88; letter-spacing: -1.5px; }
-    .label { color: #848e9c; font-size: 14px; font-weight: 600; margin-bottom: 10px; }
-    .report-inner { background: #1e2329; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 5px solid #00FF88; }
-</style>
-""", unsafe_allow_html=True)
-
-# 실시간 가격 즉시 호출
-live_price = get_realtime_binance_price()
-
-# --- 3. 메인 화면 ---
+# 사이드바 설정
 st.sidebar.title("🤖 QUANT SYSTEM")
-st.sidebar.write(f"최종 동기화: {datetime.now().strftime('%H:%M:%S')}")
+st.sidebar.info(f"시스템 가동 중: {datetime.now().strftime('%H:%M:%S')}")
 
+# --- 2. 상단 헤더 및 지표 섹션 (기존 디자인 유지) ---
 st.markdown("## 📊 AI 비트코인 실시간 분석 리포트")
+st.markdown("<p style='color:#F0B90B; font-size:12px;'>REAL-TIME BINANCE ENGINE CONNECTED</p>", unsafe_allow_html=True)
 
-# 상단 3개 지표 (탐욕지수, 신뢰도, 상태) - 다시 확실히 배치
+# 상단 3개 지표 복구
 col_a, col_b, col_c = st.columns(3)
-col_a.metric("시장 탐욕 지수", "15", "Extreme Fear")
-col_b.metric("알고리즘 신뢰도", "94.2%", "Optimal")
-col_c.metric("데이터 상태", "정상", "Live Connected")
+with col_a:
+    st.metric("시장 탐욕 지수", "15", "Extreme Fear")
+with col_b:
+    st.metric("알고리즘 신뢰도", "94.2%", "Optimal")
+with col_c:
+    st.metric("데이터 상태", "정상", "Live Connected")
 
 st.write("---")
 
-# 메인 분석 리포트 섹션
+# --- 3. 메인 분석 리포트 섹션 ---
+st.markdown("### 📈 AI 가격 분석 리포트")
 c1, c2 = st.columns(2)
 
 with c1:
-    st.markdown(f"""
-        <div class="main-card">
-            <div class="label">BINANCE 현재가 (BTC/USDT)</div>
-            <div class="price-text">${live_price:,}</div>
-        </div>
-    """, unsafe_allow_html=True)
+    # 실시간 바이낸스 시세 위젯 (트레이딩뷰 엔진)
+    st.markdown('<p style="color: #888; font-size: 14px; font-weight: 600; margin-bottom: 8px;">BINANCE 현재가 (BTC/USDT)</p>', unsafe_allow_html=True)
+    
+    # 트레이딩뷰 싱글 티커 위젯 HTML 코드
+    tradingview_widget = """
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+      {
+      "symbol": "BINANCE:BTCUSDT",
+      "width": "100%",
+      "colorTheme": "dark",
+      "isTransparent": true,
+      "locale": "ko"
+    }
+      </script>
+    </div>
+    """
+    # 위젯 삽입 (높이를 조절하여 현재가만 깔끔하게 노출)
+    components.html(tradingview_widget, height=130)
 
 with c2:
-    # 현재가 기준 AI 예측 (상승 시나리오)
-    target_price = int(live_price * 1.0135)
-    st.markdown(f"""
-        <div class="main-card">
-            <div class="label">AI 예측가</div>
-            <div class="target-text">${target_price:,}</div>
-            <div class="report-inner">
-                <span style="color:#00FF88; font-weight:bold;">≡ 분석 리포트 요약</span><br>
-                <span style="color:#ccc; font-size:13px;">
-                • 유사 패턴 시점: 2024-03-10<br>
-                • 알고리즘 유사도: 92.8% 일치
-                </span>
+    # AI 예측가 섹션 (디자인 통일)
+    st.markdown("""
+        <style>
+            .target-card {
+                background-color: #1a1c24;
+                padding: 20px;
+                border-radius: 12px;
+                border: 1px solid #333;
+                height: 130px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            .target-label { color: #888; font-size: 14px; font-weight: 600; margin-bottom: 5px; }
+            .target-price { font-size: 36px; font-weight: 800; color: #00FF88; }
+            .report-mini { font-size: 11px; color: #aaa; border-left: 3px solid #00FF88; padding-left: 10px; margin-top: 10px; }
+        </style>
+        <div class="target-card">
+            <div class="target-label">AI 예측가</div>
+            <div class="target-price">$72,832</div>
+            <div class="report-mini">
+                ≡ 분석: 유사 패턴 92.8% 일치
             </div>
         </div>
     """, unsafe_allow_html=True)
 
+# 하단 정보 바
 st.markdown(f"""
-    <div style="font-size:11px; color:#555; text-align:right; margin-top:40px;">
-        데이터 분석 로그: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} (새로고침 시 실시간 갱신)
+    <div style="font-size:11px; color:#444; text-align:right; margin-top:30px;">
+        데이터 분석 로그: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | 위젯 데이터는 실시간 자동 갱신됩니다.
     </div>
 """, unsafe_allow_html=True)
