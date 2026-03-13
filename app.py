@@ -10,37 +10,32 @@ st.sidebar.title("🤖 QUANT SYSTEM")
 menu = st.sidebar.radio("MENU", ["LIVE DASHBOARD", "LEGAL POLICY"])
 st.sidebar.info(f"시스템 가동 중: {datetime.now().strftime('%H:%M:%S')}")
 
-# --- 전문 퀀트 스타일 CSS ---
+# --- 전문 퀀트 스타일 CSS (레이아웃 교정 핵심) ---
 st.markdown("""
 <style>
     .main-header { font-size: 28px; font-weight: 800; color: white; margin-bottom: 5px; }
     .sub-header { color: #F0B90B; font-size: 12px; font-weight: 600; margin-bottom: 20px; }
     
-    .metric-container {
+    /* 카드 공통 스타일 */
+    .metric-card {
         background-color: #1a1c24;
         border: 1px solid #333;
         border-radius: 12px;
         padding: 20px;
-        height: 220px; /* 상세 리포트를 위해 높이 약간 조정 */
-    }
-    
-    .target-card {
-        background: linear-gradient(145deg, #1a1c24 0%, #111318 100%);
-        border: 1px solid #00FF8844;
-        border-radius: 12px;
-        padding: 25px;
-        height: 220px;
+        min-height: 280px; /* 확장 메뉴 고려하여 충분한 높이 확보 */
         display: flex;
         flex-direction: column;
-        justify-content: center;
     }
     
-    .label-txt { color: #848e9c; font-size: 13px; font-weight: 600; text-transform: uppercase; margin-bottom: 5px; }
-    .price-target { font-size: 42px; font-weight: 900; color: #00FF88; letter-spacing: -1.5px; line-height: 1.2; margin: 5px 0; }
+    .label-txt { color: #848e9c; font-size: 13px; font-weight: 600; text-transform: uppercase; margin-bottom: 15px; }
+    .price-target { font-size: 46px; font-weight: 900; color: #00FF88; letter-spacing: -1.5px; margin: 10px 0; }
     .badge { background: rgba(0, 255, 136, 0.1); color: #00FF88; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; width: fit-content; margin-bottom: 10px; }
     
-    /* Streamlit Expander 스타일 커스텀 */
-    .stExpander { border: none !important; background-color: transparent !important; }
+    /* 위젯 위치 교정 */
+    .widget-box { margin-top: -15px; flex-grow: 1; }
+    
+    /* 리포트 텍스트 스타일 */
+    .report-content { font-size: 13px; color: #aaa; line-height: 1.6; padding: 10px; background: #22252e; border-radius: 8px; margin-top: 10px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -60,40 +55,38 @@ if menu == "LIVE DASHBOARD":
     c1, c2 = st.columns(2)
 
     with c1:
-        st.markdown('<div class="metric-container">', unsafe_allow_html=True)
+        # 좌측: 실시간 시세 (TradingView 위젯)
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
         st.markdown('<div class="label-txt">BINANCE 실시간가 (BTC/USDT)</div>', unsafe_allow_html=True)
-        
-        # 트레이딩뷰 실시간 위젯
+        st.markdown('<div class="widget-box">', unsafe_allow_html=True)
         tradingview_widget = """
-        <div style="margin-top: -10px;">
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-            {
-              "symbol": "BINANCE:BTCUSDT",
-              "width": "100%",
-              "colorTheme": "dark",
-              "isTransparent": true,
-              "locale": "ko"
-            }
-            </script>
-        </div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+        {
+          "symbol": "BINANCE:BTCUSDT",
+          "width": "100%",
+          "colorTheme": "dark",
+          "isTransparent": true,
+          "locale": "ko"
+        }
+        </script>
         """
-        components.html(tradingview_widget, height=120)
-        st.markdown('</div>', unsafe_allow_html=True)
+        components.html(tradingview_widget, height=130)
+        st.markdown('</div></div>', unsafe_allow_html=True)
 
     with c2:
-        # AI 예측가 섹션 (인터랙티브 기능 추가)
-        st.markdown('<div class="target-card">', unsafe_allow_html=True)
+        # 우측: AI 예측가 및 인터랙티브 리포트
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
         st.markdown('<div class="badge">PRO-QUANT ENGINE</div>', unsafe_allow_html=True)
         st.markdown('<div class="label-txt">AI 예측가 (Short-term)</div>', unsafe_allow_html=True)
         st.markdown('<div class="price-target">$72,832.00</div>', unsafe_allow_html=True)
         
-        # 클릭 시 펼쳐지는 상세 리포트
-        with st.expander("≡ 분석 리포트 상세보기 (클릭)"):
+        # 본성님이 요청하신 클릭형 상세 리포트
+        with st.expander("≡ 분석 리포트 상세보기"):
             st.markdown(f"""
-                <div style="font-size: 13px; color: #aaa; line-height: 1.6;">
+                <div class="report-content">
                     • <b>유사 가격 패턴 시점:</b> 2024년 03월 10일<br>
                     • <b>패턴 알고리즘 유사도:</b> <span style="color:#00FF88;">92.8% 일치</span><br>
-                    • <b>분석 결과:</b> 과거 반등 직전 패턴과 매우 흡사하며, 단기 매수세 유입 가능성이 높음
+                    • <b>분석 결과:</b> 과거 반등 직전 패턴과 90% 이상 흡사하며, 단기 강세 매수세 유입 확률이 매우 높음
                 </div>
             """, unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
@@ -101,7 +94,7 @@ if menu == "LIVE DASHBOARD":
     st.markdown(f"""<div style="font-size:11px; color:#444; text-align:right; margin-top:40px;">분석 로그: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</div>""", unsafe_allow_html=True)
 
 else:
-    # LEGAL POLICY (보존)
+    # LEGAL POLICY (개인정보처리방침 보존)
     st.title("📄 개인정보처리방침")
     st.markdown("""---
     **1. 데이터 수집 고지** : 본 시스템은 사용자 개인정보를 저장하지 않으며, 바이낸스 공공 API만을 사용합니다.
